@@ -7,4 +7,5 @@ router.register(r'recommendations', RecommendationViewSet, basename='recommendat
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('recommendations/<int:pk>/generate/', RecommendationViewSet.as_view({'get': 'generate'}), name='generate-recommendation'),
 ]

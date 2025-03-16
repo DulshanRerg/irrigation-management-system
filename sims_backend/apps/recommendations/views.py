@@ -1,17 +1,24 @@
-from rest_framework import viewsets, permissions
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from apps.sensors.models import Sensor
+from apps.recommendations.utils import generate_irrigation_recommendation
 from apps.recommendations.models import Recommendation
+from rest_framework import viewsets, permissions
 from apps.recommendations.serializers import RecommendationSerializer
 
 class RecommendationViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows irrigation recommendations to be viewed or edited.
-    """
     queryset = Recommendation.objects.all()
     serializer_class = RecommendationSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
+    @action(detail=True, methods=['get'])
+    def generate(self, request, pk=None):
         """
-        Filter recommendations based on user role or specific criteria.
+        Generate an AI-powered irrigation recommendation for a specific sensor.
         """
-        return Recommendation.objects.all()
+        try:
+            sensor = Sensor.objects.get(pk=pk)
+            recommendation_text = generate_irrigation_recommendation(sensor)
+            return Response({"message": recommendation_text})
+        except Sensor.DoesNotExist:
+            return Response({"error": "Sensor not found"}, status=404)
