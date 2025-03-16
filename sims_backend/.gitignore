@@ -1,0 +1,13 @@
+
+senv/
+*.pyc
+__pycache__/
+*.sqlite3
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+.env
+media/
+static/images/ 
+logs
